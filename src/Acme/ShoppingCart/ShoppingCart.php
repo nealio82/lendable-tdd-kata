@@ -10,6 +10,8 @@ final class ShoppingCart
 
     public function addProduct(Product $product, int $quantity = 1): void
     {
+        $this->guardNumberOfDangerousItems($product, $quantity);
+
         for ($i = 0; $i < $quantity; $i++) {
             $this->products[] = $product;
         }
@@ -52,5 +54,20 @@ final class ShoppingCart
     public function getGrossValue(): int
     {
         return \array_sum(array_map(fn(Product $product) => $product->getPrice(), $this->products));
+    }
+
+    private function guardNumberOfDangerousItems(Product $product, int $quantity): void
+    {
+        $numDangerous = 0;
+
+        foreach ($this->products as $existingProduct) {
+            if (true === $existingProduct->isDangerous()) {
+                $numDangerous++;
+            }
+        }
+
+        if (true === $product->isDangerous() && $quantity + $numDangerous > 3) {
+            throw CartTooDangerousException::sharksExceededLimit($quantity + $numDangerous);
+        }
     }
 }
