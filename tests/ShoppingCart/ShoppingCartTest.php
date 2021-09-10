@@ -5,8 +5,7 @@ declare(strict_types=1);
 namespace Tests\ShoppingCart;
 
 use Acme\ShoppingCart\CartTooDangerousException;
-use Acme\ShoppingCart\DangerousProduct;
-use Acme\ShoppingCart\NormalProduct;
+use Acme\ShoppingCart\Product;
 use Acme\ShoppingCart\ProductDoesNotExistInCart;
 use Acme\ShoppingCart\ShoppingCart;
 use PHPUnit\Framework\TestCase;
@@ -17,7 +16,7 @@ final class ShoppingCartTest extends TestCase
     {
         $cart = new ShoppingCart();
 
-        $product = new NormalProduct('Macbook', 100);
+        $product = Product::safe('Macbook', 100);
 
         $cart->addProduct($product);
 
@@ -28,8 +27,8 @@ final class ShoppingCartTest extends TestCase
     {
         $cart = new ShoppingCart();
 
-        $product = new NormalProduct('Macbook', 100);
-        $product2 = new NormalProduct('Thinkpad', 100);
+        $product = Product::safe('Macbook', 100);
+        $product2 = Product::safe('Thinkpad', 100);
 
         $cart->addProduct($product);
         $cart->addProduct($product2);
@@ -41,15 +40,15 @@ final class ShoppingCartTest extends TestCase
     {
         $cart = new ShoppingCart();
 
-        $product = new NormalProduct('Macbook', 100);
-        $product2 = new NormalProduct('Thinkpad', 100);
+        $product = Product::safe('Macbook', 100);
+        $product2 = Product::safe('Thinkpad', 100);
 
         $cart->addProduct($product);
         $cart->addProduct($product2);
 
         $this->assertSame([$product, $product2], $cart->getProducts());
 
-        $cart->removeOne(new NormalProduct('Thinkpad', 100));
+        $cart->removeOne(Product::safe('Thinkpad', 100));
 
         $this->assertSame([$product], $cart->getProducts());
     }
@@ -58,7 +57,7 @@ final class ShoppingCartTest extends TestCase
     {
         $cart = new ShoppingCart();
 
-        $product = new NormalProduct('Macbook', 100);
+        $product = Product::safe('Macbook', 100);
 
         $this->expectException(ProductDoesNotExistInCart::class);
         $cart->removeOne($product);
@@ -68,13 +67,13 @@ final class ShoppingCartTest extends TestCase
     {
         $cart = new ShoppingCart();
 
-        $product = new NormalProduct('Macbook', 100);
-        $product2 = new NormalProduct('Macbook', 100);
+        $product = Product::safe('Macbook', 100);
+        $product2 = Product::safe('Macbook', 100);
 
         $cart->addProduct($product);
         $cart->addProduct($product2);
 
-        $cart->removeAll(new NormalProduct('Macbook', 100));
+        $cart->removeAll(Product::safe('Macbook', 100));
         $this->assertEmpty($cart->getProducts());
     }
 
@@ -83,7 +82,7 @@ final class ShoppingCartTest extends TestCase
     {
         $cart = new ShoppingCart();
 
-        $product = new NormalProduct('Macbook', 100);
+        $product = Product::safe('Macbook', 100);
 
         $cart->addProduct($product, 5);
         $this->assertSame(5, $cart->getQuantityFor($product));
@@ -96,7 +95,7 @@ final class ShoppingCartTest extends TestCase
     {
         $cart = new ShoppingCart();
 
-        $product = new NormalProduct('Macbook', 300);
+        $product = Product::safe('Macbook', 300);
 
         $cart->addProduct($product, 5);
         $this->assertSame(1500, $cart->getGrossValue());
@@ -109,7 +108,7 @@ final class ShoppingCartTest extends TestCase
     {
         $cart = new ShoppingCart();
 
-        $product = new DangerousProduct('Shark with lazer beams', 1500);
+        $product = Product::dangerous('Shark with lazer beams', 1500, true);
 
         $this->expectExceptionObject(CartTooDangerousException::sharksExceededLimit(4));
         $cart->addProduct($product, 4);
@@ -119,7 +118,7 @@ final class ShoppingCartTest extends TestCase
     {
         $cart = new ShoppingCart();
 
-        $product = new DangerousProduct('Shark with lazer beams', 1500);
+        $product = Product::dangerous('Shark with lazer beams', 1500);
 
         $cart->addProduct($product, 3);
 
@@ -130,7 +129,7 @@ final class ShoppingCartTest extends TestCase
     {
         $cart = new ShoppingCart();
 
-        $product = new DangerousProduct('Shark with lazer beams', 1500);
+        $product = Product::dangerous('Shark with lazer beams', 1500);
 
         $cart->addProduct($product, 3);
 
@@ -142,8 +141,8 @@ final class ShoppingCartTest extends TestCase
     {
         $cart = new ShoppingCart();
 
-        $product = new DangerousProduct('Shark with lazer beams', 1500);
-        $product2 = new DangerousProduct('Flamethrower', 200);
+        $product = Product::dangerous('Shark with lazer beams', 1500);
+        $product2 = Product::dangerous('Flamethrower', 200);
 
         $cart->addProduct($product, 3);
 
