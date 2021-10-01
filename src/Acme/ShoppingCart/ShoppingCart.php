@@ -8,6 +8,18 @@ final class ShoppingCart
 {
     private array $products = [];
 
+    private CartId $cartId;
+
+    public function __construct(CartId $cartId)
+    {
+        $this->cartId = $cartId;
+    }
+
+    public function id(): CartId
+    {
+        return $this->cartId;
+    }
+
     public function addProduct(Product $product, int $quantity = 1): void
     {
         $this->guardNumberOfDangerousItems($product, $quantity);
@@ -70,4 +82,5 @@ final class ShoppingCart
             throw CartTooDangerousException::sharksExceededLimit($quantity + $numDangerous);
         }
     }
+
 }

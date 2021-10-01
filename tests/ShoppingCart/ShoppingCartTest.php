@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Tests\ShoppingCart;
 
+use Acme\ShoppingCart\CartId;
 use Acme\ShoppingCart\CartTooDangerousException;
 use Acme\ShoppingCart\Product;
 use Acme\ShoppingCart\ProductDoesNotExistInCart;
@@ -14,7 +15,7 @@ final class ShoppingCartTest extends TestCase
 {
     public function test_a_product_can_be_added_to_a_cart(): void
     {
-        $cart = new ShoppingCart();
+        $cart = new ShoppingCart(CartId::generate());
 
         $product = Product::safe('Macbook', 100);
 
@@ -25,7 +26,7 @@ final class ShoppingCartTest extends TestCase
 
     public function test_multiple_products_can_be_added(): void
     {
-        $cart = new ShoppingCart();
+        $cart = new ShoppingCart(CartId::generate());
 
         $product = Product::safe('Macbook', 100);
         $product2 = Product::safe('Thinkpad', 100);
@@ -38,7 +39,7 @@ final class ShoppingCartTest extends TestCase
 
     public function test_a_product_can_be_removed(): void
     {
-        $cart = new ShoppingCart();
+        $cart = new ShoppingCart(CartId::generate());
 
         $product = Product::safe('Macbook', 100);
         $product2 = Product::safe('Thinkpad', 100);
@@ -55,7 +56,7 @@ final class ShoppingCartTest extends TestCase
 
     public function test_a_product_cannot_be_removed_if_it_has_not_been_added(): void
     {
-        $cart = new ShoppingCart();
+        $cart = new ShoppingCart(CartId::generate());
 
         $product = Product::safe('Macbook', 100);
 
@@ -65,7 +66,7 @@ final class ShoppingCartTest extends TestCase
 
     public function test_all_products_of_a_type_can_be_removed(): void
     {
-        $cart = new ShoppingCart();
+        $cart = new ShoppingCart(CartId::generate());
 
         $product = Product::safe('Macbook', 100);
         $product2 = Product::safe('Macbook', 100);
@@ -80,7 +81,7 @@ final class ShoppingCartTest extends TestCase
 
     public function test_a_quantity_of_a_product_can_be_added(): void
     {
-        $cart = new ShoppingCart();
+        $cart = new ShoppingCart(CartId::generate());
 
         $product = Product::safe('Macbook', 100);
 
@@ -93,7 +94,7 @@ final class ShoppingCartTest extends TestCase
 
     public function test_a_gross_value_is_calculated(): void
     {
-        $cart = new ShoppingCart();
+        $cart = new ShoppingCart(CartId::generate());
 
         $product = Product::safe('Macbook', 300);
 
@@ -106,7 +107,7 @@ final class ShoppingCartTest extends TestCase
 
     public function test_no_more_than_3_dangerous_items_can_be_added_to_the_cart_at_once(): void
     {
-        $cart = new ShoppingCart();
+        $cart = new ShoppingCart(CartId::generate());
 
         $product = Product::dangerous('Shark with lazer beams', 1500, true);
 
@@ -116,7 +117,7 @@ final class ShoppingCartTest extends TestCase
 
     public function test_3_dangerous_items_can_be_added_to_the_cart(): void
     {
-        $cart = new ShoppingCart();
+        $cart = new ShoppingCart(CartId::generate());
 
         $product = Product::dangerous('Shark with lazer beams', 1500);
 
@@ -127,7 +128,7 @@ final class ShoppingCartTest extends TestCase
 
     public function test_no_more_than_3_dangerous_items_can_be_added_to_the_cart(): void
     {
-        $cart = new ShoppingCart();
+        $cart = new ShoppingCart(CartId::generate());
 
         $product = Product::dangerous('Shark with lazer beams', 1500);
 
@@ -139,7 +140,7 @@ final class ShoppingCartTest extends TestCase
 
     public function test_dangerous_items_can_be_replaced(): void
     {
-        $cart = new ShoppingCart();
+        $cart = new ShoppingCart(CartId::generate());
 
         $product = Product::dangerous('Shark with lazer beams', 1500);
         $product2 = Product::dangerous('Flamethrower', 200);
